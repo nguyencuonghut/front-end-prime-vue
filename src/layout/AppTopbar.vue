@@ -2,8 +2,10 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/auth.js';
 
-const { layoutConfig, onMenuToggle } = useLayout();
+const { onMenuToggle } = useLayout();
+const store = useAuthStore();
 
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
@@ -15,10 +17,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
     unbindOutsideClickListener();
-});
-
-const logoUrl = computed(() => {
-    return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
 });
 
 const onTopBarMenuButton = () => {
@@ -58,6 +56,16 @@ const isOutsideClicked = (event) => {
 
     return !(sidebarEl.isSameNode(event.target) || sidebarEl.contains(event.target) || topbarEl.isSameNode(event.target) || topbarEl.contains(event.target));
 };
+
+function logout() {
+    store
+        .logout()
+        .then(() => {
+            router.push({
+              name: "Login",
+            });
+      });
+}
 </script>
 
 <template>
@@ -85,9 +93,9 @@ const isOutsideClicked = (event) => {
                 <i class="pi pi-user"></i>
                 <span>Profile</span>
             </button>
-            <button @click="onSettingsClick()" class="p-link layout-topbar-button">
-                <i class="pi pi-cog"></i>
-                <span>Settings</span>
+            <button v-if="store.user.token" @click="logout" class="p-link layout-topbar-button">
+                <i class="pi pi-sign-out"></i>
+                <span>Sign out</span>
             </button>
         </div>
     </div>

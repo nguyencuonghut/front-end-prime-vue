@@ -17,5 +17,15 @@ export const useAuthStore = defineStore('auth', () => {
         return data;
       })
   }
-  return { user, login }
+
+  function logout() {
+    return axiosClient.post('/logout')
+      .then(response => {
+        this.user.token = null;
+        this.user.data = {};
+        sessionStorage.removeItem("TOKEN");
+        return response;
+      })
+  }
+  return { user, login, logout }
 })
