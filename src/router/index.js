@@ -45,7 +45,6 @@ router.beforeEach((to, from, next) => {
   const store = useAuthStore();
   if (to.meta.requiresAuth && !store.user.token) {
     next({ name: "Login" });
-    console.log("Login");
   } else if (store.user.token && to.meta.isGuest) {
     next({ name: "Dashboard" });
   } else {

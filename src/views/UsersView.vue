@@ -7,4 +7,5 @@ const store = useAuthStore();
 <template>
     <h1>Users View</h1>
     <p>Token: {{ store.user.token }}</p>
+    <p>Logged User: {{ store.user.data }}</p>
 </template>
