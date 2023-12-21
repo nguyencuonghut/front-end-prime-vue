@@ -8,9 +8,13 @@ export const useAuthStore = defineStore('auth', () => {
     token: sessionStorage.getItem("TOKEN"),
   });
 
+  const usersList = ref([]);
+  const usersLoading = ref(true);
+
   async function login(user) {
     const res = await axiosClient.post('/login', user)
       .then(({data}) => {
+        //console.log(data.user);
         this.user.data =  data.user;
         this.user.token = data.token;
         sessionStorage.setItem('TOKEN', this.user.token);
@@ -26,5 +30,14 @@ export const useAuthStore = defineStore('auth', () => {
     sessionStorage.removeItem("TOKEN");
     return response;
   }
-  return { user, login, logout }
+  async function getUsers() {
+    return await axiosClient.get('/users')
+      .then((response) => {
+        this.usersList = response.data.data;
+        //console.log(response.data.data);
+        this.usersLoading = false;
+      })
+  }
+
+  return { user, usersList, usersLoading, login, logout, getUsers }
 })
