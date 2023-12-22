@@ -1,11 +1,19 @@
 <script setup>
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref, computed } from 'vue';
 import { useAuthStore } from '@/stores/auth.js';
 import moment from 'moment';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 
 const store = useAuthStore();
 const filters1 = ref(null);
+const visible = ref(false);
+const name = ref('');
+const email = ref('');
+const password = ref('');
+const password_confirmation = ref('');
+const checked = ref(false);
+const errors = ref('');
+const errorMsg = ref('');
 
 onBeforeMount(() => {
   store.getUsers();
@@ -47,13 +55,41 @@ const getStatusSeverity = (status) => {
       return 'null';
   }
 }
+
+const addUser = () => {
+  const userForm = {
+    name: name.value,
+    email: email.value,
+    password: password.value,
+    password_confirmation: password_confirmation.value
+  }
+  store
+    .addUser(userForm)
+    .then(() => {
+      console.log("Tạo người dùng thành công!");
+    })
+    .catch((err) => {
+      if (err.response.status === 422) {
+        if(err.response.data.errors) {
+          //for validation error messages
+          errors.value = err.response.data.errors;
+        } else {
+          //for store User status message
+          errorMsg.value = err.response.data.error;
+        }
+      }
+      if (err.response.status === 403) {
+        errorMsg.value = err.response.data.error;
+      }
+    });
+}
 </script>
 
 <template>
     <div class="grid">
         <div class="col-12">
             <div class="card">
-                <h5>Người dùng</h5>
+                <h5>Người dùng {{ store.user  }}</h5>
                 <DataTable
                     :value="store.usersList"
                     paginator
@@ -71,7 +107,57 @@ const getStatusSeverity = (status) => {
                 >
                     <template #header>
                         <div class="flex justify-content-between flex-column sm:flex-row">
-                            <Button type="button" icon="pi pi-filter-slash" label="Xóa" class="p-button-outlined mb-2" @click="clearFilter1()" />
+                            <div>
+                              <Button type="button" icon="pi pi-filter-slash" label="Xóa" class="p-button-outlined mb-2" @click="clearFilter1()" />
+                              &nbsp;
+                              <Button @click="visible = true" type="button" label="Thêm" severity="success" style="float:right;" icon="pi pi-plus" class="p-button-outlined mb-2" />
+                                <Dialog
+                                  v-model:visible="visible"
+                                  modal
+                                >
+                                  <template #container="{ closeCallback }">
+                                    <div class="flex flex-column px-8 py-5 gap-4" style="border-radius: 12px; background-image: radial-gradient(circle at left top, var(--green-400), var(--green-700))">
+                                      <div class="inline-flex flex-column gap-2">
+                                        <label for="name" class="text-primary-50 font-semibold">Tên</label>
+                                        <InputText v-model="name" id="name" class="bg-white-alpha-20 border-none p-3 text-primary-50"></InputText>
+                                      </div>
+                                      <div class="inline-flex flex-column gap-2">
+                                        <label for="email" class="text-primary-50 font-semibold">Email</label>
+                                        <InputText v-model="email" id="email" class="bg-white-alpha-20 border-none p-3 text-primary-50"></InputText>
+                                      </div>
+                                      <div class="inline-flex flex-column gap-2">
+                                        <label for="password" class="text-primary-50 font-semibold">Mật khẩu</label>
+                                        <Password id="password" v-model="password" placeholder="Password" :toggleMask="true" class="w-full mb-3" inputClass="w-full" :inputStyle="{ padding: '1rem' }"></Password>
+                                      </div>
+                                      <div class="inline-flex flex-column gap-2">
+                                        <label for="password_confirmation" class="text-primary-50 font-semibold">Xác nhận mật khẩu</label>
+                                        <Password id="password_confirmation" v-model="password_confirmation" placeholder="Password" :toggleMask="true" class="w-full mb-3" inputClass="w-full" :inputStyle="{ padding: '1rem' }"></Password>
+                                      </div>
+                                      <div class="inline-flex flex-column gap-2">
+                                        <div class="flex align-items-center">
+                                          <Checkbox v-model="checked" id="is_admin" binary class="mr-2"></Checkbox>
+                                          <label class="text-primary-50 font-semibold" for="is_admin">Admin</label>
+                                        </div>
+                                      </div>
+                                      <small v-if="errorMsg" class="text-yellow-500" id="text-error">{{ errorMsg || '&nbsp;' }}</small>
+                                      <div
+                                        v-if="Object.keys(errors).length"
+                                        class="flex-col items-stretch text-sm"
+                                      >
+                                        <div v-for="(field, i) of Object.keys(errors)" :key="i">
+                                          <div class="text-yellow-500" v-for="(error, ind) of errors[field] || []" :key="ind">
+                                            - {{ error }}
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="flex align-items-center gap-2">
+                                        <Button type="submit" label="Thêm" @click.prevent="addUser" text class="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
+                                        <Button label="Hủy" @click="closeCallback" text class="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"></Button>
+                                      </div>
+                                    </div>
+                                  </template>
+                                </Dialog>
+                            </div>
                             <span class="p-input-icon-left mb-2">
                                 <i class="pi pi-search" />
                                 <InputText v-model="filters1['global'].value" placeholder="Tìm" style="width: 100%" />

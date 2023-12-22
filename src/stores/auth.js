@@ -39,5 +39,12 @@ export const useAuthStore = defineStore('auth', () => {
       })
   }
 
-  return { user, usersList, usersLoading, login, logout, getUsers }
+  async function addUser(user) {
+    return await axiosClient.post('/users', user)
+      .then(() => {
+        //console.log("them moi thanh cong");
+      })
+  }
+
+  return { user, usersList, usersLoading, login, logout, getUsers, addUser }
 })
