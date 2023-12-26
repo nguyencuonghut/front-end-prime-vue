@@ -84,6 +84,7 @@ import TabMenu from 'primevue/tabmenu';
 import TieredMenu from 'primevue/tieredmenu';
 import Textarea from 'primevue/textarea';
 import Toast from 'primevue/toast';
+import ToastService from 'primevue/toastservice';
 import Toolbar from 'primevue/toolbar';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
@@ -100,7 +101,9 @@ const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
-app.use(PrimeVue, { ripple: true });
+app.use(PrimeVue, { ripple: true })
+
+app.use(ToastService);
 
 app.component('Accordion', Accordion);
 app.component('AccordionTab', AccordionTab);
