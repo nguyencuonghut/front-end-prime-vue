@@ -47,14 +47,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function editUser(user) {
-    console.log(user.id);
-    const usr = ref({});
-    usr.value.id = user.id;
-    usr.value.name = user.name;
-    usr.value.email = user.email;
-    usr.value.is_disabled = ("Khóa" == user.is_disabled) ? true : false;
-    usr.value.is_admin = ("Admin" == user.is_admin) ? true : false;
-    return await axiosClient.put('/users/' + usr.value.id, usr.value)
+    return await axiosClient.put('/users/' + user.id, user)
       .then(() => {
         //console.log("sua thanh cong");
       })

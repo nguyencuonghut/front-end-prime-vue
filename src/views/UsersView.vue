@@ -118,17 +118,7 @@ const deleteUser = () => {
   user.value = {};
   toast.add({severity:'success', summary: 'Successful', detail: 'User Deleted', life: 3000});
 };
-const findIndexById = (id) => {
-  let index = -1;
-  for (let i = 0; i < users.value.length; i++) {
-      if (users.value[i].id === id) {
-          index = i;
-          break;
-      }
-  }
 
-  return index;
-};
 const exportCSV = () => {
   dt.value.exportCSV();
 };
@@ -197,17 +187,18 @@ const getStatusSeverity = (status) => {
           <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
           <Column field="name" header="Tên" sortable style="min-width:12rem"></Column>
           <Column field="email" header="Email" sortable style="min-width:16rem"></Column>
-          <Column field="is_admin" header="Vai trò" sortable style="min-width: 12rem">
+          <Column field="role" header="Vai trò" sortable style="min-width: 12rem">
             <template #body="{ data }">
-              <Tag :severity="getRoleSeverity(data.is_admin)" >{{ data.is_admin }}</Tag>
+              <Tag :severity="getRoleSeverity(data.role)" >{{ data.role }}</Tag>
             </template>
             <template #filter="{ filterModel }">
               <InputText type="text" v-model="filterModel.value" class="p-column-filter" placeholder="Tìm theo email" />
             </template>
+
           </Column>
-          <Column field="is_disabled" header="Trạng thái" sortable style="min-width: 12rem">
+          <Column field="status" header="Trạng thái" sortable style="min-width: 12rem">
             <template #body="{ data }">
-              <Tag :severity="getStatusSeverity(data.is_disabled)" >{{ data.is_disabled }}</Tag>
+              <Tag :severity="getStatusSeverity(data.status)" >{{ data.status }}</Tag>
             </template>
             <template #filter="{ filterModel }">
               <InputText type="text" v-model="filterModel.value" class="p-column-filter" placeholder="Tìm theo email" />
@@ -252,8 +243,8 @@ const getStatusSeverity = (status) => {
         </div>
         <div class="field">
           <div class="flex align-items-center">
-            <Checkbox v-model="user.is_admin" id="is_admin" binary class="mr-2"></Checkbox>
-            <label for="is_admin">Admin</label>
+            <Checkbox v-model="user.role" id="role" binary class="mr-2"></Checkbox>
+            <label for="role">Admin</label>
           </div>
         </div>
         <small v-if="errorMsg" class="text-red-500" id="text-error">{{ errorMsg || '&nbsp;' }}</small>
