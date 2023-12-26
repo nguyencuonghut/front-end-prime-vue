@@ -27,10 +27,12 @@ const filters = ref({
     'global': {value: null, matchMode: FilterMatchMode.CONTAINS},
 });
 const submitted = ref(false);
+const header = ref('');
 const openNew = () => {
   user.value = {};
   submitted.value = false;
   userDialog.value = true;
+  header.value = "Thêm người dùng";
 
 };
 const hideDialog = () => {
@@ -43,9 +45,32 @@ const saveUser = () => {
     if (user.value.name.trim()) {
       //Edit user
         if (user.value.id) {
-          user.value.inventoryStatus = user.value.inventoryStatus.value ? user.value.inventoryStatus.value : user.value.inventoryStatus;
-            users.value[findIndexById(user.value.id)] = user.value;
-            toast.add({severity:'success', summary: 'Successful', detail: 'User Updated', life: 3000});
+          store
+            .editUser(user.value)
+            .then(() => {
+              router.push({
+                name: "Users",
+              })
+              userDialog.value = false;
+              user.value = {};
+              //Update the usersList
+              store.getUsers();
+              toast.add({severity:'success', summary: 'Successful', detail: 'Sửa người dùng thành công', life: 3000});
+            })
+            .catch((err) => {
+              if (err.response.status === 422) {
+                if(err.response.data.errors) {
+                  //for validation error messages
+                  errors.value = err.response.data.errors;
+                } else {
+                  //for store User status message
+                  errorMsg.value = err.response.data.error;
+                }
+              }
+              if (err.response.status === 403) {
+                errorMsg.value = err.response.data.error;
+              }
+            });
         }
       // Add new user
         else {
@@ -79,9 +104,9 @@ const saveUser = () => {
     }
 };
 const editUser = (prod) => {
-  console.log(prod);
   user.value = {...prod};
   userDialog.value = true;
+  header.value = "Sửa người dùng";
 };
 const confirmDeleteUser = (prod) => {
   user.value = prod;
@@ -205,7 +230,7 @@ const getStatusSeverity = (status) => {
       </DataTable>
     </div>
 
-    <Dialog v-model:visible="userDialog" :style="{width: '450px'}" header="Thêm người dùng" :modal="true" class="p-fluid">
+    <Dialog v-model:visible="userDialog" :style="{width: '450px'}" :header="header" :modal="true" class="p-fluid">
         <img v-if="user.image" :src="`https://primefaces.org/cdn/primevue/images/product/${product.image}`" :alt="user.image" class="block m-auto pb-3" />
         <div class="field">
             <label for="name">Tên</label>
