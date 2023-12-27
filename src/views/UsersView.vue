@@ -131,10 +131,14 @@ const confirmDeleteUser = (prod) => {
   deleteUserDialog.value = true;
 };
 const deleteUser = () => {
-  users.value = users.value.filter(val => val.id !== user.value.id);
+  //delete the user
+  store.destroyUser(user.value);
+  //Update the usersList
+  store.getUsers();
+  
   deleteUserDialog.value = false;
   user.value = {};
-  toast.add({severity:'success', summary: 'Successful', detail: 'User Deleted', life: 3000});
+  toast.add({severity:'success', summary: 'Successful', detail: 'Xóa người dùng thành công!', life: 3000});
 };
 
 const exportCSV = () => {
@@ -283,11 +287,11 @@ const getStatusSeverity = (status) => {
     <Dialog v-model:visible="deleteUserDialog" :style="{width: '450px'}" header="Confirm" :modal="true">
         <div class="confirmation-content">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-            <span v-if="user">Are you sure you want to delete <b>{{user.name}}</b>?</span>
+            <span v-if="user">Bạn chắc chắn muốn xóa <b>{{user.name}}</b>?</span>
         </div>
         <template #footer>
-            <Button label="No" icon="pi pi-times" text @click="deleteUserDialog = false"/>
-            <Button label="Yes" icon="pi pi-check" text @click="deleteUser" />
+            <Button label="Không" icon="pi pi-times" text @click="deleteUserDialog = false"/>
+            <Button label="Có" icon="pi pi-check" text @click="deleteUser" />
         </template>
     </Dialog>
 

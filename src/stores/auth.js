@@ -60,5 +60,9 @@ export const useAuthStore = defineStore('auth', () => {
       })
   }
 
-  return { user, usersList, usersLoading, login, logout, getUsers, getAuthUser, addUser, editUser }
+  async function destroyUser(user) {
+    return await axiosClient.delete('/users/' + user.id);
+  }
+
+  return { user, usersList, usersLoading, login, logout, getUsers, getAuthUser, addUser, editUser, destroyUser }
 })
