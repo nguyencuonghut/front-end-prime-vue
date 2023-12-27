@@ -65,5 +65,21 @@ export const useAuthStore = defineStore('auth', () => {
     return await axiosClient.delete('/users/' + user.id);
   }
 
-  return { user, usersList, usersLoading, login, logout, getUsers, getAuthUser, addUser, editUser, destroyUser }
+  async function changePassword(form) {
+    return await axiosClient.post('/change_password', form);
+  }
+
+  return {
+    user,
+    usersList,
+    usersLoading,
+    login,
+    logout,
+    getUsers,
+    getAuthUser,
+    addUser,
+    editUser,
+    destroyUser,
+    changePassword
+  }
 })

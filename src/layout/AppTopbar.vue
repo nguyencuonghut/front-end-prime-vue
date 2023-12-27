@@ -84,18 +84,10 @@ function logout() {
             <i class="pi pi-ellipsis-v"></i>
         </button>
 
-        <div class="layout-topbar-menu" :class="topbarMenuClasses">
-            <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
-                <i class="pi pi-calendar"></i>
-                <span>Calendar</span>
-            </button>
-            <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
-                <i class="pi pi-user"></i>
-                <span>Profile</span>
-            </button>
+        <div class="layout-topbar-menu" :class="topbarMenuClasses"> 
             <button v-if="store.user.token" @click="logout" class="p-link layout-topbar-button">
                 <i class="pi pi-sign-out"></i>
-                <span>Sign out</span>
+                <span>Đăng xuất</span>
             </button>
         </div>
     </div>
