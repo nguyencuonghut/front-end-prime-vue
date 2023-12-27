@@ -195,7 +195,7 @@ const getStatusSeverity = (status) => {
       <DataTable ref="dt" :value="store.usersList" v-model:selection="selectedUsers" dataKey="id" 
           :paginator="true" :rows="10" :filters="filters" :loading="store.usersLoading"
           paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]"
-          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} users">
+          currentPageReportTemplate="Hiển thị từ {first} đến {last} trên tổng số {totalRecords} người dùng">
           <template #header>
             <div class="flex flex-wrap gap-2 align-items-center justify-content-between">
               <h4 class="m-0">Quản lý người dùng</h4>
@@ -214,25 +214,15 @@ const getStatusSeverity = (status) => {
             <template #body="{ data }">
               <Tag :severity="getRoleSeverity(data.role)" >{{ data.role }}</Tag>
             </template>
-            <template #filter="{ filterModel }">
-              <InputText type="text" v-model="filterModel.value" class="p-column-filter" placeholder="Tìm theo email" />
-            </template>
-
           </Column>
           <Column field="status" header="Trạng thái" sortable style="min-width: 12rem">
             <template #body="{ data }">
               <Tag :severity="getStatusSeverity(data.status)" >{{ data.status }}</Tag>
             </template>
-            <template #filter="{ filterModel }">
-              <InputText type="text" v-model="filterModel.value" class="p-column-filter" placeholder="Tìm theo email" />
-            </template>
           </Column>
-          <Column header="Ngày tạo" filterField="created_at" dataType="date" style="min-width: 10rem">
+          <Column field="created_at" header="Ngày tạo" sortable dataType="date" style="min-width: 10rem">
             <template #body="{ data }">
               {{ moment(data.created_at).format("YYYY-MM-DD HH:mm:ss") }}
-            </template>
-            <template #filter="{ filterModel }">
-              <Calendar v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy" />
             </template>
           </Column>
           <Column v-if="isAdmin" :exportable="false" style="min-width:8rem">
