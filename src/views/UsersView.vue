@@ -28,6 +28,13 @@ const filters = ref({
 });
 const submitted = ref(false);
 const header = ref('');
+const selectedRole = ref('');
+const roles = ref([
+    { name: 'Admin', id: '1' },
+    { name: 'User', id: '2' },
+]);
+
+
 const openNew = () => {
   user.value = {};
   submitted.value = false;
@@ -41,7 +48,7 @@ const hideDialog = () => {
 };
 const saveUser = () => {
     submitted.value = true;
-
+    user.value.role_id = selectedRole.value.id;
     if (user.value.name.trim()) {
       //Edit user
         if (user.value.id) {
@@ -56,6 +63,7 @@ const saveUser = () => {
               //Update the usersList
               store.getUsers();
               toast.add({severity:'success', summary: 'Successful', detail: 'Sửa người dùng thành công', life: 3000});
+              selectedRole.value = {};
             })
             .catch((err) => {
               if (err.response.status === 422) {
@@ -85,6 +93,7 @@ const saveUser = () => {
               //Update the usersList
               store.getUsers();
               toast.add({severity:'success', summary: 'Successful', detail: 'Thêm người dùng thành công', life: 3000});
+              selectedRole.value = {};
             })
             .catch((err) => {
               if (err.response.status === 422) {
@@ -103,8 +112,13 @@ const saveUser = () => {
         }
     }
 };
-const editUser = (prod) => {
-  user.value = {...prod};
+const editUser = (usr) => {
+  user.value = {...usr};
+  if ('User' == user.value.role) {
+    selectedRole.value = {name: 'User', id: '2'};
+  } else {
+    selectedRole.value = { name: 'Admin', id: '1' };
+  }
   userDialog.value = true;
   header.value = "Sửa người dùng";
 };
@@ -222,7 +236,6 @@ const getStatusSeverity = (status) => {
     </div>
 
     <Dialog v-model:visible="userDialog" :style="{width: '450px'}" :header="header" :modal="true" class="p-fluid">
-        <img v-if="user.image" :src="`https://primefaces.org/cdn/primevue/images/product/${product.image}`" :alt="user.image" class="block m-auto pb-3" />
         <div class="field">
             <label for="name">Tên</label>
             <InputText id="name" v-model.trim="user.name" required="true" :class="{'p-invalid': submitted && !user.name}" />
@@ -242,10 +255,8 @@ const getStatusSeverity = (status) => {
           <Password id="password_confirmation" v-model="user.password_confirmation" placeholder="Password" :toggleMask="true" class="w-full mb-3" inputClass="w-full" :inputStyle="{ padding: '1rem' }"></Password>
         </div>
         <div class="field">
-          <div class="flex align-items-center">
-            <Checkbox v-model="user.role" id="role" binary class="mr-2"></Checkbox>
-            <label for="role">Admin</label>
-          </div>
+          <label for="role">Vai trò</label>
+          <Dropdown id="role" v-model="selectedRole" :options="roles" optionLabel="name" placeholder="Chọn vai trò" class="w-full mb-3" inputClass="w-full" :inputStyle="{ padding: '1rem' }" />
         </div>
         <small v-if="errorMsg" class="text-red-500" id="text-error">{{ errorMsg || '&nbsp;' }}</small>
         <div
