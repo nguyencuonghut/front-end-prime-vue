@@ -39,6 +39,13 @@ export const useAuthStore = defineStore('auth', () => {
       })
   }
 
+  async function getAuthUser() {
+    return await axiosClient.get('/user')
+      .then((response) => {
+        this.user.data = response.data.data;
+      })
+  }
+
   async function addUser(user) {
     return await axiosClient.post('/users', user)
       .then(() => {
@@ -53,5 +60,5 @@ export const useAuthStore = defineStore('auth', () => {
       })
   }
 
-  return { user, usersList, usersLoading, login, logout, getUsers, addUser, editUser }
+  return { user, usersList, usersLoading, login, logout, getUsers, getAuthUser, addUser, editUser }
 })

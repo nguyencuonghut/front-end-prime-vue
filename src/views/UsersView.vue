@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth.js';
 import { FilterMatchMode } from 'primevue/api';
@@ -10,9 +10,13 @@ const router = useRouter();
 const store = useAuthStore();
 const errors = ref('');
 const errorMsg = ref('');
+const isAdmin = computed(() => {
+  return 'Admin' == store.user.data.role ? true : false;
+})
 
 onMounted(() => {
   store.getUsers();
+  store.getAuthUser();
 });
 
 const toast = useToast();
@@ -172,7 +176,7 @@ const getStatusSeverity = (status) => {
 <template>
   <div>
     <div class="card">
-      <Toolbar class="mb-4">
+      <Toolbar v-if="isAdmin" class="mb-4">
         <template #start>
           <Button label="Thêm" icon="pi pi-plus" severity="success" class="mr-2" @click="openNew" />
           <Button label="Xóa" icon="pi pi-trash" severity="danger" @click="confirmDeleteSelected" :disabled="!selectedUsers || !selectedUsers.length" />
@@ -226,7 +230,7 @@ const getStatusSeverity = (status) => {
               <Calendar v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy" />
             </template>
           </Column>
-          <Column :exportable="false" style="min-width:8rem">
+          <Column v-if="isAdmin" :exportable="false" style="min-width:8rem">
             <template #body="slotProps">
               <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="editUser(slotProps.data)" />
               <Button icon="pi pi-trash" outlined rounded severity="danger" @click="confirmDeleteUser(slotProps.data)" />
