@@ -135,7 +135,7 @@ const deleteUser = () => {
   store.destroyUser(user.value);
   //Update the usersList
   store.getUsers();
-  
+
   deleteUserDialog.value = false;
   user.value = {};
   toast.add({severity:'success', summary: 'Successful', detail: 'Xóa người dùng thành công!', life: 3000});
@@ -193,7 +193,7 @@ const getStatusSeverity = (status) => {
       </Toolbar>
 
       <DataTable ref="dt" :value="store.usersList" v-model:selection="selectedUsers" dataKey="id" 
-          :paginator="true" :rows="10" :filters="filters"
+          :paginator="true" :rows="10" :filters="filters" :loading="store.usersLoading"
           paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]"
           currentPageReportTemplate="Showing {first} to {last} of {totalRecords} users">
           <template #header>
@@ -206,6 +206,7 @@ const getStatusSeverity = (status) => {
             </div>
           </template>
 
+          <template #loading> Đang tải dữ liệu ... </template>
           <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
           <Column field="name" header="Tên" sortable style="min-width:12rem"></Column>
           <Column field="email" header="Email" sortable style="min-width:16rem"></Column>

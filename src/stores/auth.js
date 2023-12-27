@@ -9,7 +9,7 @@ export const useAuthStore = defineStore('auth', () => {
   });
 
   const usersList = ref([]);
-  const usersLoading = ref(true);
+  const usersLoading = ref(false);
 
   async function login(user) {
     const res = await axiosClient.post('/login', user)
@@ -31,6 +31,7 @@ export const useAuthStore = defineStore('auth', () => {
     return response;
   }
   async function getUsers() {
+    this.usersLoading = true;
     return await axiosClient.get('/users')
       .then((response) => {
         this.usersList = response.data.data;
