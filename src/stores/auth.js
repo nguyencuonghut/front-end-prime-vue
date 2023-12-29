@@ -69,6 +69,14 @@ export const useAuthStore = defineStore('auth', () => {
     return await axiosClient.post('/change_password', form);
   }
 
+  async function forgotPassword(email) {
+    return await axiosClient.post('/forgot_password', email);
+  }
+
+  async function resetPassword(form) {
+    return await axiosClient.post('/reset_password', form);
+  }
+
   return {
     user,
     usersList,
@@ -80,6 +88,8 @@ export const useAuthStore = defineStore('auth', () => {
     addUser,
     editUser,
     destroyUser,
-    changePassword
+    changePassword,
+    forgotPassword,
+    resetPassword,
   }
 })
