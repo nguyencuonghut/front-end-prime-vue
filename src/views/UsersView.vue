@@ -175,6 +175,10 @@ const getStatusSeverity = (status) => {
       return null;
   }
 };
+
+const importFile = () => {
+  console.log("Import File");
+}
 </script>
 
 <template>
@@ -187,7 +191,7 @@ const getStatusSeverity = (status) => {
         </template>
 
         <template #end>
-          <FileUpload mode="basic" accept="image/*" :maxFileSize="1000000" label="Import" chooseLabel="Import" class="mr-2 inline-block" />
+          <FileUpload mode="basic" accept=".xls, xlsx" :maxFileSize="1000000" label="Import" chooseLabel="Import" customUpload @uploader="importFile" class="mr-2 inline-block" />
           <Button label="Export" icon="pi pi-upload" severity="help" @click="exportCSV($event)"  />
         </template>
       </Toolbar>
