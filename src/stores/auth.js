@@ -77,6 +77,10 @@ export const useAuthStore = defineStore('auth', () => {
     return await axiosClient.post('/reset_password', form);
   }
 
+  async function bulkDestroy(selectedUsers) {
+    return await axiosClient.post('/users/bulk_destroy', selectedUsers);
+  }
+
   return {
     user,
     usersList,
@@ -91,5 +95,6 @@ export const useAuthStore = defineStore('auth', () => {
     changePassword,
     forgotPassword,
     resetPassword,
+    bulkDestroy,
   }
 })

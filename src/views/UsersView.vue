@@ -37,7 +37,7 @@ const roles = ref([
     { name: 'Admin', id: '1' },
     { name: 'User', id: '2' },
 ]);
-
+const selectedUserIds = ref({});
 
 const openNew = () => {
   user.value = {};
@@ -148,10 +148,20 @@ const confirmDeleteSelected = () => {
   deleteUsersDialog.value = true;
 };
 const deleteSelectedUsers = () => {
-  users.value = users.value.filter(val => !selectedUsers.value.includes(val));
+  //Destroy selected users
+  let ids = [];
+  selectedUsers.value.forEach((selectedUser) => ids.push(selectedUser.id));
+  selectedUserIds.value = {
+    ids: ids,
+  }
+  //Bulk destroy users
+  store.bulkDestroy(selectedUserIds.value);
+  //Update the usersList
+  store.getUsers();
+
   deleteUsersDialog.value = false;
   selectedUsers.value = null;
-  toast.add({severity:'success', summary: 'Successful', detail: 'Users Deleted', life: 3000});
+  toast.add({severity:'success', summary: 'Successful', detail: 'Xóa thành công!', life: 3000});
 };
 
 const getRoleSeverity = (role) => {
@@ -279,7 +289,7 @@ const importFile = () => {
         </template>
     </Dialog>
 
-    <Dialog v-model:visible="deleteUserDialog" :style="{width: '450px'}" header="Confirm" :modal="true">
+    <Dialog v-model:visible="deleteUserDialog" :style="{width: '450px'}" header="Xác nhận" :modal="true">
         <div class="confirmation-content">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
             <span v-if="user">Bạn chắc chắn muốn xóa <b>{{user.name}}</b>?</span>
@@ -290,14 +300,14 @@ const importFile = () => {
         </template>
     </Dialog>
 
-    <Dialog v-model:visible="deleteUsersDialog" :style="{width: '450px'}" header="Confirm" :modal="true">
+    <Dialog v-model:visible="deleteUsersDialog" :style="{width: '450px'}" header="Xác nhận" :modal="true">
         <div class="confirmation-content">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-            <span v-if="user">Are you sure you want to delete the selected users?</span>
+            <span v-if="user">Bạn chắc muốn xóa những người dùng đã chọn?</span>
         </div>
         <template #footer>
-            <Button label="No" icon="pi pi-times" text @click="deleteUsersDialog = false"/>
-            <Button label="Yes" icon="pi pi-check" text @click="deleteSelectedUsers" />
+            <Button label="Không" icon="pi pi-times" text @click="deleteUsersDialog = false"/>
+            <Button label="Có" icon="pi pi-check" text @click="deleteSelectedUsers" />
         </template>
     </Dialog>
 	</div>
